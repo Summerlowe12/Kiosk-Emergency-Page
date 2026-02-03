@@ -20,8 +20,6 @@
       font-family: Arial, Helvetica, sans-serif;
       background: var(--bg-red);
       color: var(--text);
-
-      /* ✅ shorter home screen */
       min-height: 100vh;
 
       display:flex;
@@ -32,13 +30,11 @@
     .wrap{
       width: min(980px, 92vw);
       text-align:center;
-
-      /* ✅ reduce giant padding */
-      padding: 80px 15px;
+      padding: 70px 15px;
     }
 
     h1{
-      margin: 0 0 10px;
+      margin: 0 0 12px;
       font-size: clamp(20px, 2.4vw, 28px);
       letter-spacing: 1px;
       font-weight: 900;
@@ -46,25 +42,24 @@
     }
 
     .subtitle{
-      margin: 0 0 30px;
+      margin: 0 0 28px;
       font-size: clamp(14px, 1.6vw, 18px);
       font-weight: 800;
       color: #000;
     }
 
-    /* ✅ move buttons to the right */
+    /* ✅ CENTERED buttons directly under title */
     .stack{
       display:flex;
       flex-direction:column;
-      align-items:flex-end;     /* 👈 RIGHT */
+      align-items:center;   /* 👈 center */
       gap: 18px;
       margin-top: 10px;
-      padding-right: 20px;      /* 👈 spacing from edge */
     }
 
     .btn{
       width: min(760px, 86vw);
-      height: 68px;             /* ✅ slightly shorter */
+      height: 68px;
 
       background: var(--btn);
       border: 4px solid var(--border);
@@ -89,15 +84,12 @@
       transform: translateY(2px);
     }
 
-    /* Modal */
+    /* Modal (hidden unless opened) */
     .modal{
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.80);
-
-      /* ✅ prevents any modal content showing on home screen */
       display:none !important;
-
       align-items:center;
       justify-content:center;
       z-index: 9999;
@@ -116,14 +108,11 @@
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap: 12px;
       padding: 14px 16px;
       background:#1a1a1a;
       border-bottom: 3px solid #000;
-      color:#fff;
       font-weight:900;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     .close{
@@ -142,23 +131,18 @@
       align-items:center;
       justify-content:center;
       min-height: 95vh;
-      position: relative;
     }
 
     .modal-body img{
-      width: auto;
-      height: auto;
       max-width: 96vw;
       max-height: 92vh;
       object-fit: contain;
-      display:block;
     }
 
     .fallback{
-      color:#fff;
+      display:none;
       padding:22px;
       font-weight:800;
-      display:none;
       text-align:center;
     }
   </style>
@@ -173,28 +157,24 @@
       <button class="btn" data-title="911 Life-Threatening" data-img="images/Staysafe.png">
         911 LIFE-THREATENING
       </button>
-
       <button class="btn" data-title="Active Threat" data-img="images/active-threat.png">
         ACTIVE THREAT
       </button>
-
       <button class="btn" data-title="Medical Emergency" data-img="images/medical-emergency.png">
         MEDICAL EMERGENCY
       </button>
-
       <button class="btn" data-title="Fire / Smoke" data-img="images/fire-smoke.png">
         FIRE / SMOKE
       </button>
-
-      <button class="btn" data-title="Non-Threatening" data-img="images/nonlife-threatening.png">
-        NON-THREATENING
+      <button class="btn" data-title="OTHER" data-img="images/nonlife-threatening.png">
+        OTHER
       </button>
     </div>
   </div>
 
   <!-- Modal -->
-  <div class="modal" id="modal" aria-hidden="true">
-    <div class="modal-card" role="dialog" aria-modal="true">
+  <div class="modal" id="modal">
+    <div class="modal-card">
       <div class="modal-head">
         <div id="modalTitle">Title</div>
         <button class="close" id="closeBtn">CLOSE ✕</button>
@@ -202,7 +182,7 @@
       <div class="modal-body">
         <img id="modalImg" alt="Emergency Info"/>
         <div id="fallbackMsg" class="fallback">
-          Image not found. Upload it to the images/ folder or update the filename.
+          Image not found.
         </div>
       </div>
     </div>
@@ -217,55 +197,32 @@
 
     function openModal(title, imgPath){
       modalTitle.textContent = title;
-
-      // reset view each time
       fallbackMsg.style.display = "none";
       modalImg.style.display = "block";
-      modalImg.alt = "Emergency Info";
 
-      // per-open handlers (prevents stuck states)
-      modalImg.onload = () => {
-        fallbackMsg.style.display = "none";
-        modalImg.style.display = "block";
-      };
+      modalImg.onload = () => fallbackMsg.style.display = "none";
       modalImg.onerror = () => {
         modalImg.style.display = "none";
         fallbackMsg.style.display = "block";
       };
 
-      // cache-bust so it reliably shows on repeated clicks/kiosks
-      const sep = imgPath.includes("?") ? "&" : "?";
-      modalImg.src = imgPath + sep + "v=" + Date.now();
-
+      modalImg.src = imgPath + "?v=" + Date.now();
       modal.classList.add("open");
-      modal.setAttribute("aria-hidden", "false");
     }
 
     function closeModal(){
       modal.classList.remove("open");
-      modal.setAttribute("aria-hidden", "true");
       modalImg.src = "";
-      modalImg.onload = null;
-      modalImg.onerror = null;
-      fallbackMsg.style.display = "none";
-      modalImg.style.display = "block";
     }
 
-    document.querySelectorAll(".btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        openModal(btn.dataset.title, btn.dataset.img);
-      });
-    });
+    document.querySelectorAll(".btn").forEach(btn =>
+      btn.addEventListener("click", () =>
+        openModal(btn.dataset.title, btn.dataset.img)
+      )
+    );
 
     closeBtn.addEventListener("click", closeModal);
-
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) closeModal();
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
-    });
+    modal.addEventListener("click", e => e.target === modal && closeModal());
   </script>
 </body>
 </html>
