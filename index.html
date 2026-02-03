@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Emergency Help</title>
+  <style>
+    :root{
+      --bg-red:#e60000;
+      --btn:#2f2f2f;
+      --border:#000;
+      --text:#fff;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg-red);
+      color: var(--text);
+      min-height: 100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .wrap{
+      width: min(980px, 92vw);
+      text-align:center;
+      padding: 28px 10px 40px;
+    }
+
+    h1{
+      margin: 0 0 8px;
+      font-size: clamp(22px, 3.2vw, 34px);
+      letter-spacing: 1px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .subtitle{
+      margin: 0 0 34px;
+      font-size: clamp(14px, 1.6vw, 18px);
+      font-weight: 700;
+      color: #000;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 34px 46px;
+      justify-items:center;
+      align-items:center;
+      margin-top: 8px;
+    }
+
+    .btn{
+      width: min(380px, 42vw);
+      height: 92px;
+      background: var(--btn);
+      border: 4px solid var(--border);
+      border-radius: 18px;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 800;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 14px 16px;
+      line-height: 1.15;
+      text-align:center;
+      box-shadow: 0 2px 0 rgba(0,0,0,0.25) inset;
+    }
+
+    .btn:active{
+      transform: translateY(1px);
+    }
+
+    /* Modal */
+    .modal{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      z-index: 9999;
+    }
+
+    .modal.open{ display:flex; }
+
+    .modal-card{
+      width: min(1100px, 96vw);
+      background: #111;
+      border: 4px solid #000;
+      border-radius: 16px;
+      overflow:hidden;
+      position:relative;
+    }
+
+    .modal-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      background:#1a1a1a;
+      border-bottom: 3px solid #000;
+      color:#fff;
+      font-weight:800;
+    }
+
+    .close{
+      background:#fff;
+      color:#000;
+      border: 3px solid #000;
+      border-radius: 10px;
+      font-weight:900;
+      padding: 8px 12px;
+      cursor:pointer;
+    }
+
+    .modal-body{
+      background:#000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height: 60vh;
+    }
+
+    .modal-body img{
+      width: 100%;
+      height: auto;
+      display:block;
+      max-height: 80vh;
+      object-fit: contain;
+    }
+
+    .hint{
+      margin-top: 22px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    @media (max-width: 700px){
+      .grid{ grid-template-columns: 1fr; }
+      .btn{ width: min(520px, 86vw); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <h1>WHAT TYPE OF EMERGENCY DO YOU NEED HELP WITH?</h1>
+    <div class="subtitle">-Once selected, help will be dispatched to your location immediately-</div>
+
+    <div class="grid">
+      <button class="btn" data-title="911- Life threatening" data-img="images/911-life-threatening.png">
+        911- Life threatening
+      </button>
+
+      <button class="btn" data-title="Active threat" data-img="images/active-threat.png">
+        Active threat
+      </button>
+
+      <button class="btn" data-title="Medical Emergency" data-img="images/medical-emergency.png">
+        Medical Emergency
+      </button>
+
+      <button class="btn" data-title="Fire/ Smoke" data-img="images/fire-smoke.png">
+        Fire/ Smoke
+      </button>
+
+      <button class="btn" data-title="Non-threatening Campus Police" data-img="images/non-threatening-campus-police.png">
+        Non-threatening<br/>Campus Police
+      </button>
+
+      <button class="btn" data-title="Other" data-img="images/other.png">
+        Other
+      </button>
+    </div>
+
+    <div class="hint">
+      Put your images in the repo under <b>images/</b> with the exact filenames above (or change the filenames in the code).
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div id="modalTitle">Title</div>
+        <button class="close" id="closeBtn">CLOSE ✕</button>
+      </div>
+      <div class="modal-body">
+        <img id="modalImg" alt="Emergency Info"/>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalImg = document.getElementById("modalImg");
+    const closeBtn = document.getElementById("closeBtn");
+
+    function openModal(title, imgPath){
+      modalTitle.textContent = title;
+      modalImg.src = imgPath;
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal(){
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+      modalImg.src = "";
+    }
+
+    document.querySelectorAll(".btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const title = btn.dataset.title;
+        const img = btn.dataset.img;
+        openModal(title, img);
+      });
+    });
+
+    closeBtn.addEventListener("click", closeModal);
+
+    // click outside card closes
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // ESC closes
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
+    });
+
+    // If an image is missing, show a helpful message
+    modalImg.addEventListener("error", () => {
+      modalImg.removeAttribute("src");
+      modalImg.alt = "Image not found. Upload the image file to the images/ folder or update the filename in the code.";
+      modalImg.style.display = "none";
+
+      const msg = document.createElement("div");
+      msg.style.color = "#fff";
+      msg.style.padding = "22px";
+      msg.style.fontWeight = "700";
+      msg.textContent = "Image not found. Upload it to the images/ folder (or update the filename in index.html).";
+      const body = modalImg.parentElement;
+      body.innerHTML = "";
+      body.appendChild(msg);
+    });
+  </script>
+</body>
+</html>
