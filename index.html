@@ -33,7 +33,7 @@
 
     h1{
       margin: 0 0 8px;
-      font-size: clamp(18px, 2.2vw, 34px);
+      font-size: clamp(18px, 2.2vw, 24px);
       letter-spacing: 1px;
       font-weight: 800;
       text-transform: uppercase;
@@ -129,6 +129,7 @@
       align-items:center;
       justify-content:center;
       min-height: 60vh;
+      position: relative;
     }
 
     .modal-body img{
@@ -139,10 +140,12 @@
       object-fit: contain;
     }
 
-    .hint{
-      margin-top: 22px;
-      font-size: 12px;
-      color: rgba(255,255,255,0.85);
+    .fallback{
+      color:#fff;
+      padding:22px;
+      font-weight:700;
+      display:none;
+      text-align:center;
     }
 
     @media (max-width: 700px){
@@ -157,44 +160,32 @@
     <h1>WHAT TYPE OF EMERGENCY DO YOU NEED HELP WITH?</h1>
     <div class="subtitle">-Once selected, help will be dispatched to your location immediately-</div>
 
-   <div class="grid">
-  <button class="btn"
-          data-title="911- Life threatening"
-          data-img="images/Staysafe.png">
-    911- Life threatening
-  </button>
+    <div class="grid">
+      <button class="btn" data-title="911- Life threatening" data-img="images/Staysafe.png">
+        911- Life threatening
+      </button>
 
-  <button class="btn"
-          data-title="Active threat"
-          data-img="images/active-threat.png">
-    Active threat
-  </button>
+      <button class="btn" data-title="Active threat" data-img="images/active-threat.png">
+        Active threat
+      </button>
 
-  <button class="btn"
-          data-title="Medical Emergency"
-          data-img="images/medical-emergency.png">
-    Medical Emergency
-  </button>
+      <button class="btn" data-title="Medical Emergency" data-img="images/medical-emergency.png">
+        Medical Emergency
+      </button>
 
-  <button class="btn"
-          data-title="Fire/ Smoke"
-          data-img="images/fire-smoke.png">
-    Fire/ Smoke
-  </button>
+      <button class="btn" data-title="Fire/ Smoke" data-img="images/fire-smoke.png">
+        Fire/ Smoke
+      </button>
 
-  <button class="btn"
-          data-title="Non-threatening Campus Police"
-          data-img="images/non-threatening-campus-police.png">
-    Non-threatening<br/>Campus Police
-  </button>
+      <button class="btn" data-title="Non-threatening Campus Police" data-img="images/non-threatening-campus-police.png">
+        Non-threatening<br/>Campus Police
+      </button>
 
-  <button class="btn"
-          data-title="Other"
-          data-img="images/other.png">
-    Other
-  </button>
-</div>
-
+      <button class="btn" data-title="Other" data-img="images/other.png">
+        Other
+      </button>
+    </div>
+  </div>
 
   <!-- Modal -->
   <div class="modal" id="modal" aria-hidden="true">
@@ -205,6 +196,9 @@
       </div>
       <div class="modal-body">
         <img id="modalImg" alt="Emergency Info"/>
+        <div id="fallbackMsg" class="fallback">
+          Image not found. Upload it to the images/ folder or update the filename.
+        </div>
       </div>
     </div>
   </div>
@@ -213,11 +207,23 @@
     const modal = document.getElementById("modal");
     const modalTitle = document.getElementById("modalTitle");
     const modalImg = document.getElementById("modalImg");
+    const fallbackMsg = document.getElementById("fallbackMsg");
     const closeBtn = document.getElementById("closeBtn");
 
     function openModal(title, imgPath){
       modalTitle.textContent = title;
-      modalImg.src = imgPath;
+
+      // reset state every time
+      fallbackMsg.style.display = "none";
+      modalImg.style.display = "block";
+      modalImg.alt = "Emergency Info";
+
+      // force reload image
+      modalImg.src = "";
+      setTimeout(() => {
+        modalImg.src = imgPath;
+      }, 10);
+
       modal.classList.add("open");
       modal.setAttribute("aria-hidden", "false");
     }
@@ -226,42 +232,29 @@
       modal.classList.remove("open");
       modal.setAttribute("aria-hidden", "true");
       modalImg.src = "";
+      fallbackMsg.style.display = "none";
+      modalImg.style.display = "block";
     }
 
     document.querySelectorAll(".btn").forEach(btn => {
       btn.addEventListener("click", () => {
-        const title = btn.dataset.title;
-        const img = btn.dataset.img;
-        openModal(title, img);
+        openModal(btn.dataset.title, btn.dataset.img);
       });
     });
 
     closeBtn.addEventListener("click", closeModal);
 
-    // click outside card closes
     modal.addEventListener("click", (e) => {
       if (e.target === modal) closeModal();
     });
 
-    // ESC closes
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
     });
 
-    // If an image is missing, show a helpful message
     modalImg.addEventListener("error", () => {
-      modalImg.removeAttribute("src");
-      modalImg.alt = "Image not found. Upload the image file to the images/ folder or update the filename in the code.";
       modalImg.style.display = "none";
-
-      const msg = document.createElement("div");
-      msg.style.color = "#fff";
-      msg.style.padding = "22px";
-      msg.style.fontWeight = "700";
-      msg.textContent = "Image not found. Upload it to the images/ folder (or update the filename in index.html).";
-      const body = modalImg.parentElement;
-      body.innerHTML = "";
-      body.appendChild(msg);
+      fallbackMsg.style.display = "block";
     });
   </script>
 </body>
