@@ -20,112 +20,116 @@
       font-family: Arial, Helvetica, sans-serif;
       background: var(--bg-red);
       color: var(--text);
-      min-height: 140vh; /* makes page taller for kiosk */
+
+      /* Make it feel "taller" for kiosks */
+      min-height: 150vh;
+
       display:flex;
-      align-items:flex-start;
       justify-content:center;
+      align-items:flex-start;
     }
 
     .wrap{
-      width: min(1100px, 94vw);
+      width: min(980px, 92vw);
       text-align:center;
-      padding: 60px 10px 80px;
+
+      /* more top/bottom breathing room (kiosk feel) */
+      padding: 70px 14px 110px;
     }
 
     h1{
-      margin-bottom: 14px;
+      margin: 0 0 10px;
       font-size: clamp(20px, 2.4vw, 28px);
+      letter-spacing: 1px;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 1px;
     }
 
     .subtitle{
-      margin-bottom: 48px;
-      font-size: 16px;
-      font-weight: 700;
-      color:#000;
+      margin: 0 0 50px;
+      font-size: clamp(14px, 1.6vw, 18px);
+      font-weight: 800;
+      color: #000;
     }
 
-    /* ===== BUTTON GRID ===== */
-
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 36px;
-      justify-items:center;
-    }
-
-    .grid-bottom{
-      display:grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 36px;
-      margin-top: 36px;
-      justify-items:center;
+    /* 1-column vertical stack like your mockup */
+    .stack{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap: 32px; /* space between buttons */
+      margin-top: 10px;
     }
 
     .btn{
-      width: 100%;
-      max-width: 360px;
-      height: 110px;
+      width: min(760px, 86vw);
+      height: 84px;
+
       background: var(--btn);
       border: 4px solid var(--border);
-      border-radius: 20px;
-      color:#fff;
-      font-size: 22px;
+      border-radius: 16px;
+
+      color: #fff;
+      font-size: 20px;
       font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+
       cursor:pointer;
+
       display:flex;
       align-items:center;
       justify-content:center;
-      text-align:center;
-      padding: 18px;
-      line-height:1.2;
+
+      box-shadow: 0 2px 0 rgba(0,0,0,0.25) inset;
     }
 
     .btn:active{
       transform: translateY(2px);
     }
 
-    /* ===== MODAL ===== */
-
+    /* Modal */
     .modal{
       position: fixed;
-      inset:0;
-      background: rgba(0,0,0,0.8);
+      inset: 0;
+      background: rgba(0,0,0,0.80);
       display:none;
       align-items:center;
       justify-content:center;
-      z-index:9999;
+      padding: 18px;
+      z-index: 9999;
     }
-
     .modal.open{ display:flex; }
 
     .modal-card{
-      width: min(1200px, 96vw);
-      background:#111;
+      width: min(1100px, 96vw);
+      background: #111;
       border: 4px solid #000;
-      border-radius:18px;
+      border-radius: 16px;
       overflow:hidden;
     }
 
     .modal-head{
-      padding:18px;
-      background:#1a1a1a;
-      border-bottom:3px solid #000;
       display:flex;
-      justify-content:space-between;
       align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      background:#1a1a1a;
+      border-bottom: 3px solid #000;
+      color:#fff;
       font-weight:900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .close{
       background:#fff;
       color:#000;
-      border:3px solid #000;
-      padding:10px 16px;
-      border-radius:12px;
+      border: 3px solid #000;
+      border-radius: 10px;
       font-weight:900;
+      padding: 8px 12px;
       cursor:pointer;
     }
 
@@ -134,94 +138,130 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      min-height:65vh;
+      min-height: 65vh;
+      position: relative;
     }
 
     .modal-body img{
-      max-width:100%;
-      max-height:85vh;
-      object-fit:contain;
+      width: 100%;
+      height: auto;
+      display:block;
+      max-height: 85vh;
+      object-fit: contain;
     }
 
-    @media (max-width: 900px){
-      .grid{ grid-template-columns:1fr; }
-      .grid-bottom{ grid-template-columns:1fr; }
-      .btn{ max-width:520px; }
+    .fallback{
+      color:#fff;
+      padding:22px;
+      font-weight:800;
+      display:none;
+      text-align:center;
     }
   </style>
 </head>
 
 <body>
+  <div class="wrap">
+    <h1>WHAT TYPE OF EMERGENCY DO YOU NEED HELP WITH?</h1>
+    <div class="subtitle">-Once selected, help will be dispatched to your location immediately-</div>
 
-<div class="wrap">
-  <h1>WHAT TYPE OF EMERGENCY DO YOU NEED HELP WITH?</h1>
-  <div class="subtitle">
-    Once selected, help will be dispatched to your location immediately
-  </div>
+    <div class="stack">
+      <button class="btn" data-title="911 Life-Threatening" data-img="images/Staysafe.png">
+        911 LIFE-THREATENING
+      </button>
 
-  <!-- TOP ROW -->
-  <div class="grid">
-    <button class="btn" data-title="911 – Life Threatening" data-img="images/Staysafe.png">
-      911 – Life Threatening
-    </button>
+      <button class="btn" data-title="Active Threat" data-img="images/active-threat.png">
+        ACTIVE THREAT
+      </button>
 
-    <button class="btn" data-title="Active Threat" data-img="images/active-threat.png">
-      Active Threat
-    </button>
+      <button class="btn" data-title="Medical Emergency" data-img="images/medical-emergency.png">
+        MEDICAL EMERGENCY
+      </button>
 
-    <button class="btn" data-title="Medical Emergency" data-img="images/medical-emergency.png">
-      Medical Emergency
-    </button>
-  </div>
+      <button class="btn" data-title="Fire / Smoke" data-img="images/fire-smoke.png">
+        FIRE / SMOKE
+      </button>
 
-  <!-- BOTTOM ROW -->
-  <div class="grid-bottom">
-    <button class="btn" data-title="Fire / Smoke" data-img="images/fire-smoke.png">
-      Fire / Smoke
-    </button>
-
-    <button class="btn" data-title="Non-Emergency Assistance" data-img="images/non-emergency.png">
-      Non-Emergency Assistance
-    </button>
-  </div>
-</div>
-
-<!-- MODAL -->
-<div class="modal" id="modal">
-  <div class="modal-card">
-    <div class="modal-head">
-      <div id="modalTitle"></div>
-      <button class="close" id="closeBtn">CLOSE ✕</button>
-    </div>
-    <div class="modal-body">
-      <img id="modalImg" />
+      <button class="btn" data-title="Non-Threatening" data-img="images/non-threatening-campus-police.png">
+        NON-THREATENING
+      </button>
     </div>
   </div>
-</div>
 
-<script>
-  const modal = document.getElementById("modal");
-  const modalTitle = document.getElementById("modalTitle");
-  const modalImg = document.getElementById("modalImg");
-  const closeBtn = document.getElementById("closeBtn");
+  <!-- Modal -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div id="modalTitle">Title</div>
+        <button class="close" id="closeBtn">CLOSE ✕</button>
+      </div>
+      <div class="modal-body">
+        <img id="modalImg" alt="Emergency Info"/>
+        <div id="fallbackMsg" class="fallback">
+          Image not found. Upload it to the images/ folder or update the filename.
+        </div>
+      </div>
+    </div>
+  </div>
 
-  document.querySelectorAll(".btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      modalTitle.textContent = btn.dataset.title;
-      modalImg.src = btn.dataset.img;
+  <script>
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalImg = document.getElementById("modalImg");
+    const fallbackMsg = document.getElementById("fallbackMsg");
+    const closeBtn = document.getElementById("closeBtn");
+
+    function openModal(title, imgPath){
+      modalTitle.textContent = title;
+
+      // reset view each time
+      fallbackMsg.style.display = "none";
+      modalImg.style.display = "block";
+      modalImg.alt = "Emergency Info";
+
+      // per-open handlers (prevents stuck states)
+      modalImg.onload = () => {
+        fallbackMsg.style.display = "none";
+        modalImg.style.display = "block";
+      };
+      modalImg.onerror = () => {
+        modalImg.style.display = "none";
+        fallbackMsg.style.display = "block";
+      };
+
+      // cache-bust so it reliably shows on repeated clicks/kiosks
+      const sep = imgPath.includes("?") ? "&" : "?";
+      modalImg.src = imgPath + sep + "v=" + Date.now();
+
       modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal(){
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+      modalImg.src = "";
+      modalImg.onload = null;
+      modalImg.onerror = null;
+      fallbackMsg.style.display = "none";
+      modalImg.style.display = "block";
+    }
+
+    document.querySelectorAll(".btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        openModal(btn.dataset.title, btn.dataset.img);
+      });
     });
-  });
 
-  closeBtn.onclick = () => {
-    modal.classList.remove("open");
-    modalImg.src = "";
-  };
+    closeBtn.addEventListener("click", closeModal);
 
-  modal.onclick = e => {
-    if(e.target === modal) closeBtn.onclick();
-  };
-</script>
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
 
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
+    });
+  </script>
 </body>
 </html>
