@@ -218,11 +218,20 @@
       modalImg.style.display = "block";
       modalImg.alt = "Emergency Info";
 
-      // force reload image
-      modalImg.src = "";
-      setTimeout(() => {
-        modalImg.src = imgPath;
-      }, 10);
+      // set per-open handlers (prevents "stuck" error state)
+      modalImg.onload = () => {
+        fallbackMsg.style.display = "none";
+        modalImg.style.display = "block";
+      };
+
+      modalImg.onerror = () => {
+        modalImg.style.display = "none";
+        fallbackMsg.style.display = "block";
+      };
+
+      // cache-bust to force reliable reloads on kiosks/browsers
+      const sep = imgPath.includes("?") ? "&" : "?";
+      modalImg.src = imgPath + sep + "v=" + Date.now();
 
       modal.classList.add("open");
       modal.setAttribute("aria-hidden", "false");
@@ -231,7 +240,11 @@
     function closeModal(){
       modal.classList.remove("open");
       modal.setAttribute("aria-hidden", "true");
+
+      // reset for next time
       modalImg.src = "";
+      modalImg.onload = null;
+      modalImg.onerror = null;
       fallbackMsg.style.display = "none";
       modalImg.style.display = "block";
     }
@@ -250,11 +263,6 @@
 
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
-    });
-
-    modalImg.addEventListener("error", () => {
-      modalImg.style.display = "none";
-      fallbackMsg.style.display = "block";
     });
   </script>
 </body>
